@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899-12-30 00:00:00.000.051,C:\Prog\Project1.dproj=C:\Prog\Dater2\Dater2.dproj</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.866,C:\Prog\Unit1.dfm=C:\Prog\Dater2\Dater2Unit1.dfm</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.866,C:\Prog\Unit1.pas=C:\Prog\Dater2\Dater2Unit1.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.748,=C:\Prog\Unit1.pas</Transaction>
+  </Transactions>
+</BorlandProject>

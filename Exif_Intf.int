@@ -1,0 +1,170 @@
+{$DEFINE TRIAL}
+
+{*******************************************************}
+{                                                       }
+{               MiTeC EXIF Reader Interface             }
+{                Image EXIF Reader Object               }
+{            version 3.0 for Delphi 5,6,7,2005          }
+{                                                       }
+{            Copyright © 2004,2005 Michal Mutl          }
+{                                                       }
+{*******************************************************}
+
+
+unit EXIF_Intf;
+
+interface
+
+uses
+  Classes, Windows, SysUtils, JPEG;
+
+type
+  TASCII = array[0..255] of Char;
+  TRational = array[0..1] of Cardinal;
+  TSignedRational = array[0..1] of integer;
+
+  TTagType = (tagIFD0, tagSubIFD, tagInteropIFD, tagMakerNote, tagIFD1);
+
+  TEXIFTagHeader = record
+    Tag: Word;
+    Name: shortstring;
+    Units: shortstring;
+  end;
+
+  TEXIFTag = record
+    Header: TEXIFTagHeader;
+    Value: Double;
+    case Typ: word of
+      1: (BYTE_Value: Byte);
+      2,7: (ASCII_Value: TASCII);
+      3: (SHORT_Value: word);
+      4: (LONG_Value: Cardinal);
+      5: (RATIONAL_Value: TRational);
+      6: (SBYTE_Value: shortint);
+      8: (SSHORT_Value: smallint);
+      9: (SLONG_Value: integer);
+      10: (SRATIONAL_Value: TSignedRational);
+      11: (FLOAT_Value: single);
+      12: (DOUBLE_Value: double);
+  end;
+
+  TMakerNoteFormat = (mnfUnknown, mnfCanon, mnfNikon, mnfOlympus, mnfPanasonic,
+                      mnfFuji, mnfCasio, mnfMinolta);
+                      
+{$I EXIF_DEFS.INC}
+
+type
+  TApplicationMarker1 = record
+    Marker: Word;
+    Length: Word;
+    IDCode: array[0..4] of Char;
+    Dummy: Byte;
+  end;
+
+  TTag = record
+    ID: Word;
+    Typ: Word;
+    Count: Cardinal;
+    OffSet: Cardinal;
+  end;
+
+  TIFDHeader = record
+    ByteOrder: Word;
+    i42: Word;
+    IFD0offSet: Cardinal;
+    NumberOfEntries: Word;
+  end;
+
+  TEXIF = class(TObject)
+  private
+    FMNF: TMakerNoteFormat;
+    FTIFF, FEXIF, FINTEROP, FMN, FIFD, FIFD1: array of TEXIFTag;
+    FSOI: word;
+    FIFD0Offset,FIFD1Offset: cardinal;
+    FFile: TFileStream;
+    FSwap: Boolean;
+    FThumbnail: TJPEGImage;
+    procedure Clear;
+
+    function GetEXIFTag(ATag: Word): TEXIFTag;
+    function GetTIFFTag(ATag: Word): TEXIFTag;
+    function GetEXIFIdx(AIndex: Word): TEXIFTag;
+    function GetTIFFIdx(AIndex: Word): TEXIFTag;
+    function GetEXIFCount: integer;
+    function GetTIFFCount: integer;
+    function GetIFDTag(ATag: Word): TEXIFTag;
+    procedure ReadFromFile(const FileName: String);
+    function GetINTEROPCount: integer;
+    function GetINTEROPIdx(AIndex: Word): TEXIFTag;
+    function GetINTEROPTag(ATag: Word): TEXIFTag;
+    function GetMNCount: integer;
+    function GetMNIdx(AIndex: Word): TEXIFTag;
+    function GetMNTag(ATag: Word): TEXIFTag;
+
+    procedure ReadValue(ATag: TTag; TagType: TTagType; var AEXIF: TEXIFTag);
+    procedure ReadCanonValue0001(ATag: TTag);
+    procedure ReadCanonValue0004(ATag: TTag);
+    procedure ReadMinoltaCameraSettings(ATag: TTag);
+    function GetIFD1Count: integer;
+    function GetIFD1Idx(AIndex: Word): TEXIFTag;
+    function GetIFD1Tag(ATag: Word): TEXIFTag;
+  protected
+    property IFD_Tag[ATag: Word]: TEXIFTag read GetIFDTag;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure LoadFromFile(const FileName: String);
+
+    property TIFF_Tag[ATag: Word]: TEXIFTag read GetTIFFTag;
+    property TIFF_Index[AIndex: Word]: TEXIFTag read GetTIFFIdx;
+    property TIFFCount: integer read GetTIFFCount;
+
+    property EXIF_Tag[ATag: Word]: TEXIFTag read GetEXIFTag;
+    property EXIF_Index[AIndex: Word]: TEXIFTag read GetEXIFIdx;
+    property EXIFCount: integer read GetEXIFCount;
+
+    property EXIF_IFD1_Tag[ATag: Word]: TEXIFTag read GetIFD1Tag;
+    property EXIF_IFD1_Index[AIndex: Word]: TEXIFTag read GetIFD1Idx;
+    property EXIF_IFD1Count: integer read GetIFD1Count;
+
+    property INTEROP_Tag[ATag: Word]: TEXIFTag read GetINTEROPTag;
+    property INTEROP_Index[AIndex: Word]: TEXIFTag read GetINTEROPIdx;
+    property INTEROPCount: integer read GetINTEROPCount;
+
+    property MakerNoteFormat: TMakerNoteFormat read FMNF;
+    property MakerNote_Tag[ATag: Word]: TEXIFTag read GetMNTag;
+    property MakerNote_Index[AIndex: Word]: TEXIFTag read GetMNIdx;
+    property MakerNoteCount: integer read GetMNCount;
+
+    property Thumbnail: TJPEGImage read FThumbnail;
+  end;
+
+function TranslateCompConfig(AValue: TASCII): string;
+function TranslateColorSpace(AValue: Integer): string;
+function TranslatePhotometricInterpretation(AValue: Integer): string;
+function TranslateOrientation(AValue: Integer): string;
+function TranslatePlanarConfig(AValue: Integer): string;
+function TranslateResolutionUnit(AValue: Integer): string;
+function TranslateCompression(AValue: Integer): string;
+function TranslateFlashMode(AValue: Integer): string;
+function TranslateExposureProgram(AValue: Integer): string;
+function TranslateMeteringMode(AValue: Integer): string;
+function TranslateExposureMode(AValue: Integer): string;
+function TranslateWhiteBalance(AValue: Integer): string;
+function TranslateSceneCaptureType(AValue: Integer): string;
+function TranslateSceneType(AValue: Integer): string;
+function TranslateLightSource(AValue: Integer): string;
+function TranslateSensingMethod(AValue: Integer): string;
+function TranslateGainControl(AValue: Integer): string;
+function TranslateContrast(AValue: Integer): string;
+function TranslateSharpness(AValue: Integer): string;
+function TranslateSaturation(AValue: Integer): string;
+function TranslateSubjectDistanceRange(AValue: Integer): string;
+
+function TranslateTIFF(ATag: TEXIFTag): string;
+function TranslateEXIF(ATag: TEXIFTag): string;
+function TranslateINTEROP(ATag: TEXIFTag): string;
+function TranslateMakerNote(MNF: TMakerNoteFormat; ATag: TEXIFTag): string;
+
+implementation
+
