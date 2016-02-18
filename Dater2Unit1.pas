@@ -17,7 +17,6 @@ type
     CheckBox1: TCheckBox;
     Bevel1: TBevel;
     OpenDialog1: TOpenDialog;
-    Label1: TLabel;
     CheckBox2: TCheckBox;
     Edit1: TEdit;
     Label2: TLabel;
@@ -38,6 +37,9 @@ var
 
   CurrentFileText, CurrentFilePath, CurrentFileName : string;
   NewFileText : string;
+
+const
+  ExampleText : string = 'Exemple : "Photo.jpg" will become ';
 
 implementation
 
@@ -156,15 +158,15 @@ begin
   if edit1.Text = '' then s := '<Suffix>' else s := edit1.Text;
 
   if not checkbox2.Checked then begin
-    if radiobutton1.Checked then label1.Caption := '"YYYY-MM-DD HH-MM-SS.jpg"';
-    if radiobutton2.Checked then label1.Caption := '"YYYY-MM-DD.jpg"';
-    if radiobutton3.Checked then label1.Caption := '"YYYY-MM-DD HH-MM-SS Photo.jpg"';
-    if radiobutton4.Checked then label1.Caption := '"YYYY-MM-DD Photo.jpg"';
+    if radiobutton1.Checked then label2.Caption := ExampleText + '"YYYY-MM-DD HH-MM-SS.jpg"';
+    if radiobutton2.Checked then label2.Caption := ExampleText + '"YYYY-MM-DD.jpg"';
+    if radiobutton3.Checked then label2.Caption := ExampleText + '"YYYY-MM-DD HH-MM-SS Photo.jpg"';
+    if radiobutton4.Checked then label2.Caption := ExampleText + '"YYYY-MM-DD Photo.jpg"';
   end else begin
-    if radiobutton1.Checked then label1.Caption := '"YYYY-MM-DD HH-MM-SS '+S+'.jpg"';
-    if radiobutton2.Checked then label1.Caption := '"YYYY-MM-DD '+S+'.jpg"';
-    if radiobutton3.Checked then label1.Caption := '"YYYY-MM-DD HH-MM-SS Photo '+S+'.jpg"';
-    if radiobutton4.Checked then label1.Caption := '"YYYY-MM-DD Photo '+S+'.jpg"';
+    if radiobutton1.Checked then label2.Caption := ExampleText + '"YYYY-MM-DD HH-MM-SS '+S+'.jpg"';
+    if radiobutton2.Checked then label2.Caption := ExampleText + '"YYYY-MM-DD '+S+'.jpg"';
+    if radiobutton3.Checked then label2.Caption := ExampleText + '"YYYY-MM-DD HH-MM-SS Photo '+S+'.jpg"';
+    if radiobutton4.Checked then label2.Caption := ExampleText + '"YYYY-MM-DD Photo '+S+'.jpg"';
   end;
 end;
 
