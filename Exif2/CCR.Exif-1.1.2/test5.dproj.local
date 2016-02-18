@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<BorlandProject>
-  <Transactions>
-    <Transaction>2012-02-17 20:33:15.351,=C:\Prog\XE2\Unit1.pas</Transaction>
-    <Transaction>2012-02-17 20:33:28.805,C:\Prog\Dater2\Exif2\CCR.Exif-1.1.2\test5Unit1.dfm=C:\Prog\XE2\Unit1.dfm</Transaction>
-    <Transaction>2012-02-17 20:33:28.805,C:\Prog\Dater2\Exif2\CCR.Exif-1.1.2\test5Unit1.pas=C:\Prog\XE2\Unit1.pas</Transaction>
-    <Transaction>2012-02-17 20:33:30.731,C:\Prog\Dater2\Exif2\CCR.Exif-1.1.2\test5.dproj=C:\Prog\XE2\Project1.dproj</Transaction>
-  </Transactions>
-</BorlandProject>
